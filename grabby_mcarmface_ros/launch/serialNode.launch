@@ -1,0 +1,10 @@
+<launch>
+	<node
+		pkg="grabby_mcarmface_ros"
+		type="serialNode"
+		name="serialNode"
+		output="screen"
+		respawn="false"
+		>
+	</node>
+</launch>
