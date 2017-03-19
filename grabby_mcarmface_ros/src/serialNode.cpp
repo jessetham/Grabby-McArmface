@@ -68,7 +68,14 @@ void SerialNode::callVoiceService( std::string command )
 {
 	grabby_mcarmface_ros::TurnOnMic srv;
 	srv.request.turn_on = 1;
-	voiceClient_.call(srv);
+	if( voiceClient_.call(srv) )
+	{
+		ROS_INFO( "Response was %s", srv.response.input_sig.c_str() );
+	}
+	else
+	{
+		ROS_ERROR( "Something's wrong" );
+	}
 }
 
 int main( int argc, char ** argv )
