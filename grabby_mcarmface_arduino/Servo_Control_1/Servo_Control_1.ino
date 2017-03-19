@@ -78,9 +78,21 @@ int s2_cur_degree;
 int s1_cur_analog;
 int s1_cur_degree;
 
+
 float a;
 float b;
 float groundsmash;
+
+int servoPositions [6];
+bool recordflag = 0;
+
+int s1_storage[600];
+int s2_storage[600];
+int s3_storage[600];
+int s4_storage[600];
+int s5_storage[600];
+int frames = 600;
+int frame_delay = 35;
 
 void setup() {
   Serial.begin(115200);
@@ -90,6 +102,19 @@ void setup() {
   servo3.attach(servo3pin);
   servo2.attach(servo2pin);
   servo1.attach(servo1pin);
+
+  pinMode(8, OUTPUT);
+  pinMode(18, INPUT_PULLUP);
+//  attachInterrupt(digitalPinToInterrupt(18), record, FALLING);
+  pinMode(44, OUTPUT);
+  pinMode(45, OUTPUT);
+  pinMode(46, OUTPUT);
+  pinMode(47, OUTPUT);
+  digitalWrite(44, LOW);
+  digitalWrite(45, LOW);
+  digitalWrite(46, LOW);
+  digitalWrite(47, LOW);
+  
 }
 
 void loop() {
@@ -97,6 +122,10 @@ void loop() {
   serial_read();
   analog_read();
   servo_write();
+  record2();
+  if (recordflag == 1){
+    playback();
+  }
 
   Serial.print(a);
   Serial.print(' ');
@@ -115,7 +144,141 @@ void loop() {
   Serial.print(s5_cur_degree);
   Serial.print('\n');
     
-  delay(100);
+  delay(10);
+}
+
+void playback(){
+  delay(1000);
+  for (int x = 0; x<frames;x++){
+     servo1.write(s1_storage[x]);
+     servo2.write(s2_storage[x]);
+     servo3.write(s3_storage[x]);
+     servo4.write(s4_storage[x]);
+     servo5.write(s5_storage[x]);
+     Serial.println("playback");
+     delay(frame_delay);
+    }
+    recordflag = 0;
+}
+
+void record2(){
+  
+  if(digitalRead(18) == 0){
+  servo1.detach();
+  servo2.detach();
+  servo3.detach();
+  servo4.detach();
+  servo5.detach();
+  
+   digitalWrite(8, HIGH);
+   delay(100);
+   digitalWrite(8, LOW);
+   delay(100);
+   
+   for (int x = 0; x<frames;x++){
+     s1_storage[x] = 90;
+     s2_storage[x] = 90;
+     s3_storage[x] = 90;
+     s4_storage[x] = 90;
+     s5_storage[x] = 90;
+    }
+    
+   int count = 0;
+   while(digitalRead(18) == 0)
+   {
+      s5_cur_analog = analogRead(servo5apin);
+      s5_cur_degree = map(s5_cur_analog, s5_amin, s5_amax, 0, 180);
+      s4_cur_analog = analogRead(servo4apin);
+      s4_cur_degree = map(s4_cur_analog, s4_amin, s4_amax, 0, 180);
+      s3_cur_analog = analogRead(servo3apin);
+      s3_cur_degree = map(s3_cur_analog, s3_amin, s3_amax, 0, 180);
+      s2_cur_analog = analogRead(servo2apin);
+      s2_cur_degree = map(s2_cur_analog, s2_amin, s2_amax, 0, 180);
+      s1_cur_analog = analogRead(servo1apin);
+      s1_cur_degree = map(s1_cur_analog, s1_amin, s1_amax, 0, 180);
+//      Serial.print("s1");
+//      Serial.print(s1_cur_degree;
+//      Serial.print("s2");
+//      Serial.print(s2_cur_degree);
+//      Serial.print("s3");
+//      Serial.print(s3_cur_degree);
+//      Serial.print("s4");
+//      Serial.print(s4_cur_degree);
+//      Serial.print("s5");
+//      Serial.print(s5_cur_degree);
+//      Serial.print('\n');
+      if (count < frames){
+      s1_storage[count] = s1_cur_degree;
+      s2_storage[count] = s2_cur_degree;
+      s3_storage[count] = s3_cur_degree;
+      s4_storage[count] = s4_cur_degree;
+      s5_storage[count] = s5_cur_degree;
+      }
+      Serial.println("recording");
+      count++;
+      delay(frame_delay);
+   }
+  servo5.attach(servo5pin);
+  servo4.attach(servo4pin);
+  servo3.attach(servo3pin);
+  servo2.attach(servo2pin);
+  servo1.attach(servo1pin);
+  recordflag = 1;
+  }
+  
+  
+}
+
+void record()
+{
+  servo1.detach();
+  servo2.detach();
+  servo3.detach();
+  servo4.detach();
+  servo5.detach();
+  
+   digitalWrite(13, HIGH);
+   delay(100);
+   digitalWrite(13, LOW);
+   delay(100);
+
+   int count = 0;
+   while(digitalRead(18) == 0)
+   {
+
+      s5_cur_analog = analogRead(servo5apin);
+      s5_cur_degree = map(s5_cur_analog, s5_amin, s5_amax, 0, 180);
+      s4_cur_analog = analogRead(servo4apin);
+      s4_cur_degree = map(s4_cur_analog, s4_amin, s4_amax, 0, 180);
+      s3_cur_analog = analogRead(servo3apin);
+      s3_cur_degree = map(s3_cur_analog, s3_amin, s3_amax, 0, 180);
+      s2_cur_analog = analogRead(servo2apin);
+      s2_cur_degree = map(s2_cur_analog, s2_amin, s2_amax, 0, 180);
+      s1_cur_analog = analogRead(servo1apin);
+      s1_cur_degree = map(s1_cur_analog, s1_amin, s1_amax, 0, 180);
+//      Serial.print("s1");
+//      Serial.print(s1_cur_degree;
+//      Serial.print("s2");
+//      Serial.print(s2_cur_degree);
+//      Serial.print("s3");
+//      Serial.print(s3_cur_degree);
+//      Serial.print("s4");
+//      Serial.print(s4_cur_degree);
+//      Serial.print("s5");
+//      Serial.print(s5_cur_degree);
+//      Serial.print('\n');
+      s1_storage[count] = s1_cur_degree;
+
+      Serial.println(s1_storage[count]);
+      count++;
+      delayMicroseconds(1000000);
+   }
+  servo5.attach(servo5pin);
+  servo4.attach(servo4pin);
+  servo3.attach(servo3pin);
+  servo2.attach(servo2pin);
+  servo1.attach(servo1pin);
+   
 }
 
 void servo_write(){
