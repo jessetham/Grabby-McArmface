@@ -22,6 +22,7 @@
 
 Servo servo1;
 #define servo1pin 13
+#define servo1apin 0
 
 String incoming_string;
 String data;
@@ -35,6 +36,11 @@ int s33;
 int s44;
 int s55;
 
+int s1_amin = 89;
+int s1_amax = 474;
+
+int s1_cur_analog;
+int s1_cur_degree;
 
 void setup() {
   Serial.begin(115200);
@@ -43,11 +49,23 @@ void setup() {
 }
 
 void loop() {
-
+  
   serial_read();
-  Serial.println(s11);
-  Serial.println(s22);
+  analog_read();
+  servo_write();
+  
+  
+    
   delay(100);
+}
+
+void servo_write(){
+  servo1.write(s11);
+}
+
+void analog_read(){
+  s1_cur_analog = analogRead(servo1apin);
+  s1_cur_degree = map(s1_cur_analog, s1_amin, s1_amax, 0, 180);
 }
 
 void serial_read() {
@@ -69,6 +87,17 @@ char inputbuffer[20];
       s33 = s3;
       s44 = s4;
       s55 = s5;
+//      Serial.print(',');
+//      Serial.print(s1);
+//      Serial.print(' ');
+//      Serial.print(s2);
+//      Serial.print(' ');
+//      Serial.print(s3);
+//      Serial.print(' ');
+//      Serial.print(s4);
+//      Serial.print(' ');
+//      Serial.print(s5);
+//      Serial.print('\n');
       
     }
     else{
