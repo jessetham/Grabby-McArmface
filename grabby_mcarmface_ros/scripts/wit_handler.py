@@ -26,7 +26,6 @@ class voiceHandler:
         }
         self.client = Wit(access_token=access_token, actions=self.actions)
         self.session_id = 0
-        self.mode_pub = rospy.Publisher('/grabby/mode', String, queue_size = 5)
         self.audio_parm = {"chunk" :1024, "FORMAT" :pyaudio.paInt16, "RATE" :44100, "CHANNELS":1}
         self.p = pyaudio.PyAudio()
         self.mic_on = 0
@@ -51,9 +50,7 @@ class voiceHandler:
             exr = sen["entities"]["on_off"][0]["value"]
         print exr
 
-        msg = String()
-        msg.data = exr
-        self.mode_pub.publish(msg)
+        return exr
 
     def get_mic(self, req):
         """
@@ -88,15 +85,17 @@ class voiceHandler:
 
             resp = self.client.speech('/tmp/tmp.wav', None, {'content-type': 'audio/raw;encoding=unsigned-integer;bits=16;rate=44100;endian=little'})
             print 'resp = ', str(resp)
+            return self.exr_words(resp)
 
         else:
             print "waiting for client..."
+            return None
 
     def audio_test(self):
         with open('../audio/sample6.wav', 'rb') as f:
             resp = self.client.speech(f, None, {'Content-Type': 'audio/wav'})
         print 'Yay, got Wit.ai response: ' , str(resp)
-        self.exr_words(resp)
+        r = self.exr_words(resp)
 
     def main(self, test_with_file):
         if test_with_file == "True":
