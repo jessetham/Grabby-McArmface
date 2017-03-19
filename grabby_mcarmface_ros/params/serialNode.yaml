@@ -1,5 +1,5 @@
 # Port name for connection with microcontroller
-port: '/dev/ttyACM0'
+port: "/dev/ttyACM0"
 
 # Baud rate for serial connection with microcontroller
 baud: 115200
@@ -7,4 +7,4 @@ baud: 115200
 # Time that we will be waiting for response from microcontroller
 timeout: 8000
 
-angleTopic: '/servo_angle'
+angleTopic: "servoAngle"
