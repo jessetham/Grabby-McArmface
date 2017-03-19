@@ -56,10 +56,12 @@ class voiceHandler:
         """
         button callback that trigers the voice command
         """
+        print "not even here"
         if req.turn_on == 1:
             self.mic_on = 1
 
         if self.mic_on == 1:
+            rospy.loginfo("Start recording.")
             stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
             data = array('h')
             time_s = time.clock()
@@ -69,6 +71,7 @@ class voiceHandler:
                 if byteorder == 'big':
                     record.byteswap()
                 data.extend(record)
+            rospy.loginfo("Recording ended.")
 
             sample_width = self.p.get_sample_size(self.audio_parm["FORMAT"])
             stream.stop_stream()
@@ -87,9 +90,8 @@ class voiceHandler:
             print 'resp = ', str(resp)
             return TurnOnMicResponse(self.exr_words(resp))
 
-        else:
-            print "waiting for client..."
-            return TurnOnMicResponse()
+        print "waiting for client..."
+        return TurnOnMicResponse("")
 
     def audio_test(self):
         with open('../audio/sample6.wav', 'rb') as f:
@@ -102,8 +104,8 @@ class voiceHandler:
             self.audio_test()
         else:
             #rospy.Subscriber('/button', Int8, self.button_cb)
-            print "starting service.."
             s = rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
+            rospy.spin()
 
 if __name__ == "__main__":
     #reload(sys)
@@ -118,4 +120,3 @@ if __name__ == "__main__":
 
     handler = voiceHandler(access_token)
     handler.main(test_with_file = with_file)
-    rospy.spin()

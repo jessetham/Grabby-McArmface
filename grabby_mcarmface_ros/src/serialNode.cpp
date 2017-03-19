@@ -15,7 +15,7 @@ SerialNode::SerialNode() :
 		ROS_ERROR( "Serial port not working" );
 	}
 
-	voiceClient_ = privateNH_.serviceClient<grabby_mcarmface_ros::TurnOnMic>( "turn_on_mic" );
+	voiceClient_ = privateNH_.serviceClient<grabby_mcarmface_ros::TurnOnMic>( "/turn_on_mic" );
 	// setup serial listener to listen for endline character
 	serialListener_.setTokenizer( SerialListener::delimeter_tokenizer( "\n" ) );
 	serialListener_.startListening( *this->serialPort_ );
@@ -83,6 +83,6 @@ int main( int argc, char ** argv )
 	ros::init( argc, argv, "serialNode" );
 	SerialNode serialNode;
 	serialNode.listen();
-	
+
 	return 0;
 }
