@@ -6,3 +6,5 @@ baud: 115200
 
 # Time that we will be waiting for response from microcontroller
 timeout: 8000
+
+angleTopic: '/servo_angle'

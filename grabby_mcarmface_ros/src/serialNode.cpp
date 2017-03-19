@@ -18,6 +18,18 @@ SerialNode::SerialNode() :
 	// setup serial listener to listen for endline character
 	serialListener_.setTokenizer( SerialListener::delimeter_tokenizer( "\n" ) );
 	serialListener_.startListening( *this->serialPort_ );
+
+	std::string angleTopic;
+	privateNH_.getParam( "serialNode/angleTopic", angleTopic );
+	angleSub_ = privateNH_.subscribe( angleTopic, 1, &SerialNode::angleCB, this );
+	ROS_INFO( "Subscribed to to angle topic" );
+}
+
+void SerialNode::angleCB( const grabby_mcarmface_ros::ServoAngleArray::ConstPtr &msg )
+{
+	char inputBuffer[MAX_MSG_SIZE];
+	sprintf( inputBuffer, "s1%ds2%ds3%ds4%ds5%d\n", msg->servoAngle1, msg->servoAngle2,
+		msg->servoAngle3, msg->servoAngle4, msg->servoAngle5 );
 }
 
 int main( int argc, char ** argv )
