@@ -15,8 +15,7 @@ SerialNode::SerialNode() :
 		ROS_ERROR( "Serial port not working" );
 	}
 
-	// TODO: Add service client initialization
-
+	voiceClient_ = privateNH_.serviceClient<grabby_mcarmface_ros::TurnOnMic>( "turn_on_mic" );
 	// setup serial listener to listen for endline character
 	serialListener_.setTokenizer( SerialListener::delimeter_tokenizer( "\n" ) );
 	serialListener_.startListening( *this->serialPort_ );
@@ -67,7 +66,9 @@ void SerialNode::sendCommand( std::string command )
 
 void SerialNode::callVoiceService( std::string command )
 {
-	
+	grabby_mcarmface_ros::TurnOnMic srv;
+	srv.request.turn_on = 1;
+	voiceClient_.call(srv);
 }
 
 int main( int argc, char ** argv )

@@ -17,7 +17,7 @@ private:
 	void callVoiceService( std::string command );
 	// ROS 
 	ros::NodeHandle privateNH_;
-	ros::ServiceClient voiceClient;
+	ros::ServiceClient voiceClient_;
 	
 	// Serial port
 	serial::Serial * serialPort_;
