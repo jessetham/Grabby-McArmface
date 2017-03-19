@@ -56,7 +56,6 @@ class voiceHandler:
         """
         button callback that trigers the voice command
         """
-        print "not even here"
         if req.turn_on == 1:
             self.mic_on = 1
 
@@ -76,7 +75,7 @@ class voiceHandler:
             sample_width = self.p.get_sample_size(self.audio_parm["FORMAT"])
             stream.stop_stream()
             stream.close()
-            self.p.terminate()
+            #self.p.terminate()
 
             data = pack('<' + ('h' * len(data)), *data)
             wave_file = wave.open('/tmp/tmp.wav', 'wb')
@@ -89,6 +88,7 @@ class voiceHandler:
             with open('/tmp/tmp.wav', 'rb') as f:
                 resp = self.client.speech(f, None, {'content-type': 'audio/wav'})
             print 'resp = ', str(resp)
+            self.mic_on = 0
             return TurnOnMicResponse(self.exr_words(resp))
 
         else:
@@ -107,6 +107,7 @@ class voiceHandler:
         else:
             #rospy.Subscriber('/button', Int8, self.button_cb)
             s = rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
+            rospy.spin()
 
 if __name__ == "__main__":
     #reload(sys)
@@ -121,4 +122,3 @@ if __name__ == "__main__":
 
     handler = voiceHandler(access_token)
     handler.main(test_with_file = with_file)
-    rospy.spin()

@@ -20,7 +20,7 @@ class faceTracker:
         self.mv_pub = rospy.Publisher('/joint_state', UInt8MultiArray, queue_size = 5)
 
     def main(self):
-        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        face_cascade = cv2.CascadeClassifier('/home/ka/412_ws/src/Grabby-McArmface/grabby_mcarmface_ros/data/haarcascade_frontalface_default.xml')
         while(True):
             ret, frame = self.web_cap.read()
             if ret:
