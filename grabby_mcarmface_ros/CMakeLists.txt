@@ -26,16 +26,6 @@ generate_messages(
 ###################################
 catkin_package(
   CATKIN_DEPENDS message_runtime
-  button.msg
-)
-
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
-
-catkin_package(
-  CATKIN_DEPENDS message_runtime
 )
 
 include_directories(
