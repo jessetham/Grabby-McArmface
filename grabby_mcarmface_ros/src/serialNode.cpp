@@ -50,14 +50,6 @@ void SerialNode::listen()
 	}
 }
 
-void SerialNode::angleCB( const grabby_mcarmface_ros::ServoAngleArray::ConstPtr &msg )
-{
-	std::stringstream ss;
-	ss << "s1" << msg->servoAngle1 << "s2" << msg->servoAngle2 << "s3" << msg->servoAngle3\
-		<< "s4" << msg->servoAngle4 << "s5" << msg->servoAngle5 << "\n";
-	sendCommand( ss.str() );
-}
-
 void SerialNode::sendCommand( std::string command )
 {
 	BufferedFilterPtr replyFilter = this->serialListener_.createBufferedFilter( SerialListener::startsWith( "," ) );

@@ -12,9 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-add_message_files(
+add_service_files(
   FILES
-  ServoAngleArray.msg
+  TurnOnMic.srv
 )
 
 generate_messages(

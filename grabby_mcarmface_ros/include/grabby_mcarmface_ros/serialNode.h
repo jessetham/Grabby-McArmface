@@ -5,13 +5,12 @@
 #include <ros/ros.h>
 #include <serial/serial.h>
 #include <serial/utils/serial_listener.h>
-#include <grabby_mcarmface_ros/ServoAngleArray.h>
+#include <grabby_mcarmface_ros/TurnOnMic.h>
 
 class SerialNode {
 public:
 	SerialNode();
 	void listen();
-	void angleCB( const grabby_mcarmface_ros::ServoAngleArray::ConstPtr &msg );
 
 private:	
 	void sendCommand( std::string command );
