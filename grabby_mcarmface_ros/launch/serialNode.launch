@@ -6,5 +6,7 @@
 		output="screen"
 		respawn="false"
 		>
+	<!-- Parameter Set -->
+	<rosparam file="$(find grabby_mcarmface_ros)/params/serialNode.yaml" />
 	</node>
 </launch>

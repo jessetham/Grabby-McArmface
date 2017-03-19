@@ -7,19 +7,18 @@
 
 class SerialNode {
 public:
-	SerialNode( std::string port, int baud, int timeout );
+	SerialNode();
 
 private:
-	serial::Serial * serialPort_;
-	serial::utils::SerialListener serialListener_;
-
-	// ROS
+	// ROS 
 	ros::NodeHandle privateNH_;
 	
 	// Serial port
-	const std::string port_;
-	const int baud_;
-	const int timeout_;
+	serial::Serial * serialPort_;
+	serial::utils::SerialListener serialListener_;
+	std::string port_;
+	int baud_;
+	int timeout_;
 };
 
 #endif

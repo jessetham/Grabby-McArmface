@@ -3,9 +3,12 @@
 using namespace serial;
 using namespace serial::utils;
 
-SerialNode::SerialNode( std::string port, int baud, int timeout) :
-	privateNH_("~"), port_(port), baud_(baud), timeout_(timeout)
+SerialNode::SerialNode() :
+	privateNH_("~")
 {
+	privateNH_.getParam( "serialNode/port", port_ );
+	privateNH_.getParam( "serialNode/baud", baud_ );
+	privateNH_.getParam( "serialNode/timeout", timeout_ );
 	serialPort_ = new Serial( port_, baud_, Timeout::simpleTimeout( 1000 ) );
 	if( !serialPort_->isOpen() )
 	{
@@ -20,6 +23,6 @@ SerialNode::SerialNode( std::string port, int baud, int timeout) :
 int main( int argc, char ** argv )
 {
 	ros::init( argc, argv, "serialNode" );
-	SerialNode SerialNode( "/dev/ttyACM0", 115200, 8000 );
+	SerialNode SerialNode();
 	return 0;
 }
