@@ -65,7 +65,7 @@ class voiceHandler:
             stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
             data = array('h')
             time_s = time.clock()
-            while time.clock() < time_s + 0.02: #TODO: as above
+            while time.clock() < time_s + 0.04: #TODO: as above
                 print time.clock()
                 record = array('h', stream.read(self.audio_parm["chunk"]))
                 if byteorder == 'big':
@@ -86,15 +86,17 @@ class voiceHandler:
             wave_file.writeframes(data)
             wave_file.close()
 
-            resp = self.client.speech('/tmp/tmp.wav', None, {'content-type': 'audio/raw;encoding=unsigned-integer;bits=16;rate=44100;endian=little'})
+            with open('/tmp/tmp.wav', 'rb') as f:
+                resp = self.client.speech(f, None, {'content-type': 'audio/wav'})
             print 'resp = ', str(resp)
             return TurnOnMicResponse(self.exr_words(resp))
 
-        print "waiting for client..."
-        return TurnOnMicResponse("")
+        else:
+            print "waiting for client..."
+            return TurnOnMicResponse("")
 
     def audio_test(self):
-        with open('../audio/sample6.wav', 'rb') as f:
+        with open('/tmp/tmp.wav', 'rb') as f:
             resp = self.client.speech(f, None, {'Content-Type': 'audio/wav'})
         print 'Yay, got Wit.ai response: ' , str(resp)
         r = self.exr_words(resp)
@@ -105,7 +107,6 @@ class voiceHandler:
         else:
             #rospy.Subscriber('/button', Int8, self.button_cb)
             s = rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
-            rospy.spin()
 
 if __name__ == "__main__":
     #reload(sys)
@@ -120,3 +121,4 @@ if __name__ == "__main__":
 
     handler = voiceHandler(access_token)
     handler.main(test_with_file = with_file)
+    rospy.spin()
