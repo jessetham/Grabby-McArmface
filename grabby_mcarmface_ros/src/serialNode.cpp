@@ -51,17 +51,17 @@ void SerialNode::listen()
 
 void SerialNode::sendCommand( std::string command )
 {
-	BufferedFilterPtr replyFilter = this->serialListener_.createBufferedFilter( SerialListener::startsWith( "," ) );
+	//BufferedFilterPtr replyFilter = this->serialListener_.createBufferedFilter( SerialListener::startsWith( "," ) );
 	this->serialPort_->write( command );
-	std::string reply = replyFilter->wait( timeout_ );
-	if( reply.empty() )
-	{
-		ROS_ERROR( "I didn't hear anything" );
-	}
-	else
-	{
-		ROS_INFO("I heard %s", reply.c_str() );
-	}
+	//std::string reply = replyFilter->wait( timeout_ );
+	//if( reply.empty() )
+	//{
+	//	ROS_ERROR( "I didn't hear anything" );
+	//}
+	//else
+	//{
+	//	ROS_INFO("I heard %s", reply.c_str() );
+	//}
 }
 
 void SerialNode::callVoiceService( std::string command )
@@ -70,7 +70,9 @@ void SerialNode::callVoiceService( std::string command )
 	srv.request.turn_on = 1;
 	if( voiceClient_.call(srv) )
 	{
-		ROS_INFO( "Response was %s", srv.response.input_sig.c_str() );
+		std::string srvResponse = srv.response.input_sig + ".txt";
+		ROS_INFO( "Sending: %s", srvResponse.c_str() );
+		sendCommand( srvResponse );
 	}
 	else
 	{
