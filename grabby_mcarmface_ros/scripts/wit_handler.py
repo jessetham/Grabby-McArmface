@@ -40,7 +40,7 @@ class voiceHandler:
         """
         Our robot onlu contains two mode: free mode and learning mode
         """
-        if sen["entities"] == None:
+        if sen["entities"] == {}:
             exr = "free"
         elif "intent" in sen["entities"].keys():
             exr = sen["entities"]["intent"][0]["value"]
@@ -102,7 +102,7 @@ class voiceHandler:
             self.audio_test()
         else:
             #rospy.Subscriber('/button', Int8, self.button_cb)
-            print "starting service..."
+            print "starting service.."
             s = rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
 
 if __name__ == "__main__":
