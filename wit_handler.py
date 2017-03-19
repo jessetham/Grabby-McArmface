@@ -8,6 +8,7 @@ import sys
 from wit import Wit
 
 import rospy
+from std_msgs.msg import String
 from audio_common_msgs.msg import AudioData
 
 class voiceHandler:
@@ -18,16 +19,13 @@ class voiceHandler:
         }
         self.client = Wit(access_token=access_token, actions=self.actions)
         self.session_id = 0
+        self.mode_pub = rospy.Publisher('/grabby/mode', String, queue_size = 5)
 
     def action_send(self, request, response):
+        """
+        Text communication.. well we don't need it for now
+        """
         print(response['text'])
-
-
-    def add_actions(self):
-        #TODO
-        # add functionality for learning
-        # add specific taught task as new entities
-        pass
 
     def exr_words(self, sen):
         """
@@ -39,8 +37,9 @@ class voiceHandler:
             exr = sen["entities"]["on_off"][0]["value"]
         print exr
 
-    def converse(self):
-        pass
+        msg = String()
+        msg.data = exr
+        self.mode_pub.publish(msg)
 
     def audio_cb(self, msg):
         #TODO
