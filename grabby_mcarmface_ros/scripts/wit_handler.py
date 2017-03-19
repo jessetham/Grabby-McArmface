@@ -29,18 +29,13 @@ class voiceHandler:
         self.mode_pub = rospy.Publisher('/grabby/mode', String, queue_size = 5)
         self.audio_parm = {"chunk" :1024, "FORMAT" :pyaudio.paInt16, "RATE" :44100, "CHANNELS":1}
         self.p = pyaudio.PyAudio()
-        self.rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
         self.mic_on = 0
-
-    def get_mic(self, req):
-        if req == 1:
-            self.mic_on = 1
 
     def action_send(self, request, response):
         """
         Text communication.. well we don't need it for now
         """
-        print(response['text'])
+        print response['text']
 
     def exr_words(self, sen):
         """
@@ -60,14 +55,16 @@ class voiceHandler:
         msg.data = exr
         self.mode_pub.publish(msg)
 
-    def button_cb(self, msg):
+    def get_mic(self, req):
         """
         button callback that trigers the voice command
         """
-        stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
-        #TODO: substitue with button input
-        data = array('h')
+        if req == 1:
+            self.mic_on = 1
+
         if self.mic_on == 1:
+            stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
+            data = array('h')
             time_s = time.clock()
             while time.clock() < time_s + 0.02: #TODO: as above
                 print time.clock()
@@ -76,34 +73,37 @@ class voiceHandler:
                     record.byteswap()
                 data.extend(record)
 
-        sample_width = self.p.get_sample_size(self.audio_parm["FORMAT"])
-        stream.stop_stream()
-        stream.close()
-        self.p.terminate()
+            sample_width = self.p.get_sample_size(self.audio_parm["FORMAT"])
+            stream.stop_stream()
+            stream.close()
+            self.p.terminate()
 
-        data = pack('<' + ('h' * len(data)), *data)
-        wave_file = wave.open('/tmp/tmp.wav', 'wb')
-        wave_file.setnchannels(self.audio_parm["CHANNELS"])
-        wave_file.setsampwidth(sample_width)
-        wave_file.setframerate(self.audio_parm["RATE"])
-        wave_file.writeframes(data)
-        wave_file.close()
+            data = pack('<' + ('h' * len(data)), *data)
+            wave_file = wave.open('/tmp/tmp.wav', 'wb')
+            wave_file.setnchannels(self.audio_parm["CHANNELS"])
+            wave_file.setsampwidth(sample_width)
+            wave_file.setframerate(self.audio_parm["RATE"])
+            wave_file.writeframes(data)
+            wave_file.close()
 
-        resp = self.client.speech('/tmp/tmp.wav', None, {'content-type': 'audio/raw;encoding=unsigned-integer;bits=16;rate=44100;endian=little'})
-        print('resp = '+ str(resp))
+            resp = self.client.speech('/tmp/tmp.wav', None, {'content-type': 'audio/raw;encoding=unsigned-integer;bits=16;rate=44100;endian=little'})
+            print 'resp = ', str(resp)
+
+        else:
+            print "waiting for client..."
 
     def audio_test(self):
         with open('../audio/sample6.wav', 'rb') as f:
             resp = self.client.speech(f, None, {'Content-Type': 'audio/wav'})
-        print('Yay, got Wit.ai response: ' + str(resp))
+        print 'Yay, got Wit.ai response: ' , str(resp)
         self.exr_words(resp)
 
     def main(self, test_with_file):
         if test_with_file == "True":
             self.audio_test()
         else:
-            rospy.Subscriber('/button', Int8, self.button_cb)
-            rospy.spin()
+            #rospy.Subscriber('/button', Int8, self.button_cb)
+            self.rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
 
 if __name__ == "__main__":
     #reload(sys)
