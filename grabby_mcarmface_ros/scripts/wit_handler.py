@@ -16,7 +16,7 @@ from sys import byteorder
 
 import rospy
 from std_msgs.msg import String, UInt8
-from grabby_mcarmface_ros.srv import TurnOnMic
+from grabby_mcarmface_ros.srv import *
 
 class voiceHandler:
     def __init__(self, access_token):
@@ -56,7 +56,7 @@ class voiceHandler:
         """
         button callback that trigers the voice command
         """
-        if req == 1:
+        if req.turn_on == 1:
             self.mic_on = 1
 
         if self.mic_on == 1:
@@ -85,11 +85,11 @@ class voiceHandler:
 
             resp = self.client.speech('/tmp/tmp.wav', None, {'content-type': 'audio/raw;encoding=unsigned-integer;bits=16;rate=44100;endian=little'})
             print 'resp = ', str(resp)
-            return self.exr_words(resp)
+            return TurnOnMicResponse(self.exr_words(resp))
 
         else:
             print "waiting for client..."
-            return None
+            return TurnOnMicResponse()
 
     def audio_test(self):
         with open('../audio/sample6.wav', 'rb') as f:
@@ -102,7 +102,8 @@ class voiceHandler:
             self.audio_test()
         else:
             #rospy.Subscriber('/button', Int8, self.button_cb)
-            self.rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
+            print "starting service..."
+            s = rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
 
 if __name__ == "__main__":
     #reload(sys)
