@@ -16,6 +16,7 @@ from sys import byteorder
 
 import rospy
 from std_msgs.msg import String, UInt8
+from grabby_mcarmface_ros.srv import TurnOnMic
 
 class voiceHandler:
     def __init__(self, access_token):
@@ -28,6 +29,12 @@ class voiceHandler:
         self.mode_pub = rospy.Publisher('/grabby/mode', String, queue_size = 5)
         self.audio_parm = {"chunk" :1024, "FORMAT" :pyaudio.paInt16, "RATE" :44100, "CHANNELS":1}
         self.p = pyaudio.PyAudio()
+        self.rospy.Service('turn_on_mic', TurnOnMic, self.get_mic)
+        self.mic_on = 0
+
+    def get_mic(self, req):
+        if req == 1:
+            self.mic_on = 1
 
     def action_send(self, request, response):
         """
@@ -60,7 +67,7 @@ class voiceHandler:
         stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
         #TODO: substitue with button input
         data = array('h')
-        if raw_input('Press enter to start: ') == "":
+        if self.mic_on == 1:
             time_s = time.clock()
             while time.clock() < time_s + 0.02: #TODO: as above
                 print time.clock()
