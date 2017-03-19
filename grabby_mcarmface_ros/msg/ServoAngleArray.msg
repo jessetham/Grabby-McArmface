@@ -1,6 +1,6 @@
 Header header
-int16 servoAngle1
-int16 servoAngle2
-int16 servoAngle3
-int16 servoAngle4
-int16 servoAngle5
+int32 servoAngle1
+int32 servoAngle2
+int32 servoAngle3
+int32 servoAngle4
+int32 servoAngle5

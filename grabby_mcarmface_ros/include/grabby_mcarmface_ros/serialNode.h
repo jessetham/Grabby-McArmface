@@ -10,13 +10,15 @@
 class SerialNode {
 public:
 	SerialNode();
+	void listen();
 	void angleCB( const grabby_mcarmface_ros::ServoAngleArray::ConstPtr &msg );
 
 private:	
 	void sendCommand( std::string command );
+	void callVoiceService( std::string command );
 	// ROS 
 	ros::NodeHandle privateNH_;
-	ros::Subscriber angleSub_;
+	ros::ServiceClient voiceClient;
 	
 	// Serial port
 	serial::Serial * serialPort_;
