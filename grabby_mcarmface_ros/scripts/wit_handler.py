@@ -15,7 +15,7 @@ from array import array
 from sys import byteorder
 
 import rospy
-from std_msgs.msg import String, Int8
+from std_msgs.msg import String, UInt8
 
 class voiceHandler:
     def __init__(self, access_token):
