@@ -70,7 +70,7 @@ void SerialNode::callVoiceService( std::string command )
 	srv.request.turn_on = 1;
 	if( voiceClient_.call(srv) )
 	{
-		std::string srvResponse = srv.response.input_sig + ".txt";
+		std::string srvResponse = srv.response.input_sig + ".txt\n";
 		ROS_INFO( "Sending: %s", srvResponse.c_str() );
 		sendCommand( srvResponse );
 	}

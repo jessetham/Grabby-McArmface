@@ -61,7 +61,12 @@ class voiceHandler:
 
         if self.mic_on == 1:
             rospy.loginfo("Start recording.")
-            stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
+            try:
+                stream = self.p.open(format=self.audio_parm["FORMAT"], channels=self.audio_parm["CHANNELS"], rate=self.audio_parm["RATE"], input=True, output=True,frames_per_buffer=self.audio_parm["chunk"])
+            except ValueError:
+                self.p.terminate()
+                print "I/O error. Shutting stream down."
+
             data = array('h')
             time_s = time.clock()
             while time.clock() < time_s + 0.04: #TODO: as above
