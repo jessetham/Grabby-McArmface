@@ -14,6 +14,18 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
+  ServoAngleArray.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+###################################
+## catkin specific configuration ##
+###################################
+catkin_package(
+  CATKIN_DEPENDS message_runtime
   button.msg
 )
 
@@ -32,5 +44,5 @@ include_directories(
 )
 
 add_executable(serialNode src/serialNode.cpp)
-add_dependencies(serialNode ${PROJECT_NAME}_EXPORTED_LIBRARIES )
+add_dependencies(serialNode ${PROJECT_NAME}_EXPORTED_LIBRARIES  ${grabby_mcarmface_ros_EXPORTED_TARGETS})
 target_link_libraries(serialNode ${catkin_LIBRARIES} ${serial_LIBRARIES} ${serial_utils_LIBRARIES})
