@@ -50,6 +50,12 @@ int s33 = 90;
 int s44 = 90;
 int s55 = 90;
 
+int s11p;
+int s22p;
+int s33p;
+int s44p;
+int s55p;
+
 int s5_amin = 107;
 int s5_amax = 481;
 int s4_amin = 108;
@@ -72,6 +78,10 @@ int s2_cur_degree;
 int s1_cur_analog;
 int s1_cur_degree;
 
+float a;
+float b;
+float groundsmash;
+
 void setup() {
   Serial.begin(115200);
   Serial.setTimeout(2);
@@ -88,6 +98,12 @@ void loop() {
   analog_read();
   servo_write();
 
+  Serial.print(a);
+  Serial.print(' ');
+  Serial.print(b);
+  Serial.print(' ');
+  Serial.print(groundsmash);
+  Serial.print(' ');
   Serial.print(s1_cur_degree);
   Serial.print(' ');
   Serial.print(s2_cur_degree);
@@ -103,14 +119,38 @@ void loop() {
 }
 
 void servo_write(){
-  servo5.write(s55);
-  servo4.write(s44);
-  servo3.write(s33);
-  servo2.write(s22);
-  servo1.write(s11);
+
+  s55 = constrain(s55, 75, 170);
+  s44 = constrain(s44, 0, 180);
+  s33 = constrain(s33, 0, 180);
+  s22 = constrain(s22, 0, 160);
+  s11 = constrain(s11, 0, 180);
+
+  a = s22 + 10;
+  b = s33 - 110; 
+  groundsmash = 6.00 + 16.00*sin(a*PI/180.00) + 21.00*cos(b*PI/180.00)*sin(a*PI/180.00) + 21.00*sin(b*PI/180.00)*cos(a*PI/180.00);
+
+  
+  if (groundsmash > 5){
+    servo3.write(s33);
+    servo2.write(s22);
+    servo5.write(s55);
+    servo4.write(s44);
+    servo1.write(s11);
+    
+  }
+  else {
+    servo5.write(s55);
+    servo4.write(s44);
+    servo1.write(s11);
+    Serial.println("naaaaa");
+  }  
 }
 
+
+
 void analog_read(){
+  
   s5_cur_analog = analogRead(servo5apin);
   s5_cur_degree = map(s5_cur_analog, s5_amin, s5_amax, 0, 180);
   s4_cur_analog = analogRead(servo4apin);
@@ -136,7 +176,7 @@ char inputbuffer[20];
       int s3;
       int s4;
       int s5;
-      res = sscanf(inputbuffer, "s1%d s2%d s3%d s4%d s5%d", &s1, &s2, &s3, &s4, &s5);
+      res = sscanf(inputbuffer, "s1%ds2%ds3%ds4%ds5%d", &s1, &s2, &s3, &s4, &s5);
       inputlength = 0;
       s11 = s1;
       s22 = s2;
