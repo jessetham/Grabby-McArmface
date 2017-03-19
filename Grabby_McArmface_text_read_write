@@ -1,0 +1,27 @@
+
+import os.path
+
+
+def write_values(folder_path, file_name, servo_values):
+
+    file_path = os.path.join(folder_path, file_name)
+    with open(file_name, 'w') as writer:
+        for row in servo_values:
+            writer.write(row)
+
+
+def read_values(folder_path, file_name):
+
+    file_path = os.path.join(folder_path,file_name)
+    with open(file_name, 'r') as reader:
+        servo_values_new = reader.readlines()
+    return servo_values_new
+
+
+servo_values = ['s11s22s33s44s55\n', 's12s23s34s45s56\n', 's13s24s35s46s57\n']
+file_name = r'whereamiwtfwhattimeisit.txt'
+folder_path = r'C:\Users\bwcon\Documents\Hackathon 2017'
+write_values(folder_path, file_name, servo_values)
+read_values(folder_path,file_name)
+
+
