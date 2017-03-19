@@ -4,6 +4,8 @@
 **Dependencies**  
 1. ros audio-common. Install by `sudo apt-get install ros-distro-audio-common`  
 2. WIT speech API. Install by `pip install wit`  
+3. pyaudio  
+4. 
 
 **Usage**  
 1. `roslaunch audio_capture capture.launch`
